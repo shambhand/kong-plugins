@@ -1,0 +1,88 @@
+name: lua-circuit-breaker-lib
+on:
+  workflow_dispatch:
+    inputs:
+      Branch:
+        description: 'Branch to Build'
+        required: true
+        default: 'main'
+
+env:
+  helm_chart_name: 'lua-circuit-breaker'
+  helm_chart_dir: './kong/plugins/lua-circuit-breaker/helm'
+  helm_version: 'v3.12.3'
+
+jobs:
+  build-chart:
+    runs-on: ubuntu-24.04
+    name: Build and publish lua-circuit-breaker library helm chart
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: '${{ github.event.inputs.Branch }}'
+          fetch-depth: 0
+
+      - name: Compute Semantic Version
+        id: compute-version
+        run: |
+          TAG_PREFIX="lua-circuit-breaker-"
+          LATEST_TAG=$(git tag --list "${TAG_PREFIX}*" --sort=-v:refname | head -n 1)
+          if [ -z "$LATEST_TAG" ]; then
+            NEW_VERSION="1.0.0"
+          else
+            VERSION="${LATEST_TAG#$TAG_PREFIX}"
+            MAJOR=$(echo "$VERSION" | cut -d. -f1)
+            MINOR=$(echo "$VERSION" | cut -d. -f2)
+            PATCH=$(echo "$VERSION" | cut -d. -f3)
+            NEW_PATCH=$((PATCH + 1))
+            NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
+          fi
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          RUN_NUMBER="${{ github.run_number }}"
+          if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "master" ]; then
+            CLEAN_VERSION="$NEW_VERSION"
+          else
+            CLEAN_VERSION="${NEW_VERSION}-${BRANCH_NAME}-${RUN_NUMBER}"
+          fi
+          echo "VERSION=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+          echo "TAG_VERSION=${TAG_PREFIX}${CLEAN_VERSION}" >> $GITHUB_OUTPUT
+          echo "Computed version: $CLEAN_VERSION"
+
+      - name: Copy Lua Files to Helm Chart Directory
+        run: |
+          find ./kong/plugins/lua-circuit-breaker -name '*.lua' -exec cp -prv '{}' "${{ env.helm_chart_dir }}" ";"
+          echo "Copied lua source to helm directory"
+
+      - name: Set Up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ env.helm_version }}
+
+      - name: Helm Lint and Template
+        run: |
+          helm lint ${{ env.helm_chart_dir }}
+          helm template ${{ env.helm_chart_dir }}
+          echo "Helm lint and template successful"
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Helm Package
+        run: |
+          helm package ${{ env.helm_chart_dir }} --version ${{ steps.compute-version.outputs.VERSION }}
+
+      - name: Helm Push to GHCR
+        run: |
+          helm push ${{ env.helm_chart_name }}-${{ steps.compute-version.outputs.VERSION }}.tgz oci://ghcr.io/${{ github.repository_owner }}/helm-charts
+
+      - name: Push Release Tag
+        if: ${{ github.event.inputs.Branch == 'main' || github.event.inputs.Branch == 'master' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.compute-version.outputs.TAG_VERSION }}" -m "Release ${{ steps.compute-version.outputs.TAG_VERSION }}"
+          git push origin "${{ steps.compute-version.outputs.TAG_VERSION }}"

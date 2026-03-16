@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  {{ $currentScope := .}}
+  {{ range $path, $_ :=  .Files.Glob  "**.lua" }}
+  {{ $path }}: |-
+  {{- with $currentScope}}
+{{ .Files.Get $path | indent 4}}
+  {{- end }}
+  {{ end }}

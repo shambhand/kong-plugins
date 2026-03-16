@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: "1.0"
+description: A Helm chart for circuit-breaker Kong plugin
+name: circuit-breaker
+version: 0.1.0
+sources:
+  - https://github.com/shambhand/kong-plugins.git
+  - https://github.com/dream11/kong-circuit-breaker
+keywords:
+  - Kong Custom Plugins
+  - Circuit-Breaker
+maintainers:
+  - name: shambhand

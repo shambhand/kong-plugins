@@ -1,0 +1,8 @@
+.idea/
+.ash_history
+servroot/
+.DS_Store
+*/.DS_Store
+.pongo/.bash_history
+.vscode/
+*.tgz

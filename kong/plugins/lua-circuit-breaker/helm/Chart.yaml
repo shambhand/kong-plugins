@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: "1.0"
+description: A Helm chart for lua-circuit-breaker library used by the circuit-breaker Kong plugin
+name: lua-circuit-breaker
+version: 0.1.0
+sources:
+  - https://github.com/shambhand/kong-plugins.git
+  - https://github.com/dream11/lua-circuit-breaker
+keywords:
+  - Kong Custom Plugins
+  - lua-circuit-breaker
+maintainers:
+  - name: shambhand
