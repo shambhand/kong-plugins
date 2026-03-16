@@ -86,3 +86,20 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${{ steps.compute-version.outputs.TAG_VERSION }}" -m "Release ${{ steps.compute-version.outputs.TAG_VERSION }}"
           git push origin "${{ steps.compute-version.outputs.TAG_VERSION }}"
+
+      - name: Create GitHub Release
+        if: ${{ github.event.inputs.Branch == 'main' || github.event.inputs.Branch == 'master' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.compute-version.outputs.TAG_VERSION }}
+          name: "${{ env.helm_chart_name }} ${{ steps.compute-version.outputs.VERSION }}"
+          generate_release_notes: true
+          body: |
+            ## Helm Chart: ${{ env.helm_chart_name }} v${{ steps.compute-version.outputs.VERSION }}
+
+            ### Install
+            ```bash
+            helm install ${{ env.helm_chart_name }} oci://ghcr.io/${{ github.repository_owner }}/helm-charts/${{ env.helm_chart_name }} --version ${{ steps.compute-version.outputs.VERSION }} -n kong
+            ```
+          files: |
+            ${{ env.helm_chart_name }}-${{ steps.compute-version.outputs.VERSION }}.tgz
