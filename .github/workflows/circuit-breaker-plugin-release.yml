@@ -10,7 +10,7 @@ on:
 env:
   helm_chart_name: 'circuit-breaker'
   helm_chart_dir: './kong/plugins/circuit-breaker/helm'
-  helm_version: 'v3.12.3'
+  helm_version: 'v3.16.3'
 
 jobs:
   build-chart:
@@ -21,7 +21,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: '${{ github.event.inputs.Branch }}'
           fetch-depth: 0
@@ -58,7 +58,7 @@ jobs:
           echo "Copied lua source to helm directory"
 
       - name: Set Up Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4
         with:
           version: ${{ env.helm_version }}
 
