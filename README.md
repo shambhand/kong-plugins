@@ -7,8 +7,8 @@ A collection of custom Kong Gateway plugins packaged as Helm charts for Kubernet
 | Plugin | Description | Docs |
 |--------|-------------|------|
 | [jwt2headers](kong/plugins/jwt2headers/) | Extracts JWT claims and injects them as upstream request headers | [Documentation](docs/jwt2headers-kong-plugin.md) |
-| [circuit-breaker](kong/plugins/circuit-breaker/) | Circuit-breaker pattern for upstream services at the gateway level | [Documentation](docs/circuit-breaker-kong-plugin.md) |
-| [lua-circuit-breaker](kong/plugins/lua-circuit-breaker/) | Lua library dependency for the circuit-breaker plugin | — |
+| [circuit-breaker](kong/plugins/circuit-breaker/) | Circuit-breaker pattern for upstream services at the gateway level | [Documentation](https://github.com/dream11/lua-circuit-breaker) |
+| [lua-circuit-breaker](kong/plugins/lua-circuit-breaker/) | Lua library dependency for the circuit-breaker plugin | [Documentation](https://github.com/dream11/kong-circuit-breaker) |
 
 ## Repository Structure
 
