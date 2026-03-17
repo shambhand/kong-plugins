@@ -56,11 +56,11 @@ Each plugin's Lua source code is packaged into a Helm chart that creates a Kuber
 
 ```bash
 # Simple plugin (no library dependency)
-helm install jwt2headers oci://ghcr.io/shambhand/helm-charts/jwt2headers --version 1.0.0 -n kong
+helm upgrade --install jwt2headers oci://ghcr.io/shambhand/helm-charts/jwt2headers --version 1.0.0 -n kong
 
 # Plugin with library dependency
-helm install lua-circuit-breaker oci://ghcr.io/shambhand/helm-charts/lua-circuit-breaker --version 1.0.0 -n kong
-helm install circuit-breaker oci://ghcr.io/shambhand/helm-charts/circuit-breaker --version 1.0.0 -n kong
+helm upgrade --install lua-circuit-breaker oci://ghcr.io/shambhand/helm-charts/lua-circuit-breaker --version 1.0.0 -n kong
+helm upgrade --install circuit-breaker oci://ghcr.io/shambhand/helm-charts/circuit-breaker --version 1.0.0 -n kong
 ```
 
 **Step 2: Configure Kong Helm chart `values.yaml`**
@@ -86,7 +86,7 @@ deployment:
 **Step 3: Install Kong**
 
 ```bash
-helm install kong kong/kong -f values.yaml -n kong
+helm upgrade --install kong kong/kong -f values.yaml -n kong
 ```
 
 ## CI/CD

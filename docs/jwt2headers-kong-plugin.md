@@ -94,5 +94,5 @@ plugins:
 This plugin is packaged as a Helm chart that creates a Kubernetes ConfigMap containing the plugin's Lua code. See the [helm chart](https://github.com/shambhand/kong-plugins/tree/main/kong/plugins/jwt2headers/helm) for details.
 
 ```bash
-helm install jwt2headers oci://ghcr.io/shambhand/helm-charts/jwt2headers --version 1.0.0 -n kong
+helm upgrade --install jwt2headers oci://ghcr.io/shambhand/helm-charts/jwt2headers --version 1.0.0 -n kong
 ```

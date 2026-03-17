@@ -29,10 +29,10 @@ This plugin requires the `lua-circuit-breaker` library to be deployed as a **sep
 
 ```bash
 # 1. Deploy the library ConfigMap
-helm install lua-circuit-breaker oci://ghcr.io/shambhand/helm-charts/lua-circuit-breaker --version 1.0.0 -n kong
+helm upgrade --install lua-circuit-breaker oci://ghcr.io/shambhand/helm-charts/lua-circuit-breaker --version 1.0.0 -n kong
 
 # 2. Deploy the plugin ConfigMap
-helm install circuit-breaker oci://ghcr.io/shambhand/helm-charts/circuit-breaker --version 1.0.0 -n kong
+helm upgrade --install circuit-breaker oci://ghcr.io/shambhand/helm-charts/circuit-breaker --version 1.0.0 -n kong
 ```
 
 ## Configuration Reference
